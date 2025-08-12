@@ -1,1 +1,409 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>LIC Jeevan Anand (715)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      const config = {
+        app_name: "LIC Jeevan Anand (715) – Interactive Pitch",
+        target_device: "mobile",
+        orientation: "landscape",
+        brand: {
+          palette: {
+            licBlue: "#0B4EA2",
+            licGold: "#F5C13D",
+            railBlue1: "#0f3e83",
+            railBlue2: "#0B4EA2",
+            railBlue3: "#1f6fe0",
+            card: "#FFF7D6",
+            border: "#EED27B",
+            ink: "#0B1530",
+            muted: "#5B627A",
+            bgSoft: "#F8FAFF",
+            success: "#22C55E",
+          },
+          style: { look: "modern", effects: ["glassmorphism", "soft-shadows", "rounded-2xl"], emoji_allowed: true },
+        },
+        product: {
+          plan_name: "Jeevan Anand",
+          plan_code: "715",
+          tagline: "Zindagi ke saath bhi, Zindagi ke baad bhi",
+        },
+        data_model: {
+          tiers: [
+            { id: "p1", label: "₹2,600", monthly: 2600, maturity: "₹15,33,000", natural_cover: "₹10,00,000", accidental_cover: "₹15,00,000", lifetime_cover: "₹5,00,000" },
+            { id: "p2", label: "₹5,000", monthly: 5000, maturity: "₹30,66,000", natural_cover: "₹20,00,000", accidental_cover: "₹30,00,000", lifetime_cover: "₹10,00,000" },
+            { id: "p3", label: "₹12,500", monthly: 12500, maturity: "₹76,65,000", natural_cover: "₹50,00,000", accidental_cover: "₹75,00,000", lifetime_cover: "₹25,00,000" },
+          ],
+          ages: [29, 35, 40, 45, 50, 60, 70, 80, 90, 100],
+        },
+        screen: {
+          layout: [
+            { id: "tierChips", type: "chip-group", position: "top", variant: "pill", size: "large", items_from: "data_model.tiers", active_default: "p2" },
+            { id: "timeline", type: "horizontal-strip", height_vh: 48 },
+          ],
+        },
+        copy: {
+          disclaimer: "Illustrative. Final benefits as per LIC illustration & proposal at time of purchase.",
+        },
+      };
+
+      const minAge = 29;
+      const maxAge = 100;
+      const leftGutterPct = 7;
+      const rightGutterPct = 7;
+      const pctForAge = (age) => leftGutterPct + ((age - minAge) / (maxAge - minAge)) * (100 - leftGutterPct - rightGutterPct);
+      const relPctForAge = (age) => ((age - minAge) / (maxAge - minAge)) * 100;
+
+      const usePrevious = (value) => {
+        const ref = useRef(value);
+        useEffect(() => { ref.current = value; }, [value]);
+        return ref.current;
+      };
+
+      function useConfetti({ containerRef, colors, count = 90 }) {
+        const doneRef = useRef(false);
+        const burst = () => {
+          if (!containerRef.current) return;
+          const host = containerRef.current;
+          const frag = document.createDocumentFragment();
+          for (let i = 0; i < count; i++) {
+            const dot = document.createElement("div");
+            const size = 6 + Math.random() * 6;
+            const hue = colors[Math.floor(Math.random() * colors.length)];
+            dot.style.position = "absolute";
+            dot.style.left = `${50 + (Math.random() - 0.5) * 10}%`;
+            dot.style.top = `${40 + (Math.random() - 0.5) * 10}%`;
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            dot.style.borderRadius = "9999px";
+            dot.style.background = hue;
+            dot.style.opacity = "0.95";
+            const dx = (Math.random() - 0.5) * 220;
+            const dy = -Math.random() * 260 - 60;
+            const rot = (Math.random() - 0.5) * 360;
+            dot.animate(
+              [ { transform: "translate(0,0) rotate(0deg)", opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity: 0 } ],
+              { duration: 1400 + Math.random() * 700, easing: "cubic-bezier(.2,.8,.2,1)" }
+            );
+            setTimeout(() => dot.remove(), 2200);
+            frag.appendChild(dot);
+          }
+          host.appendChild(frag);
+        };
+        return { burst, doneRef };
+      }
+
+      function IconShield({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <path d="M12 3l7 3v5c0 5-3.5 9.3-7 11-3.5-1.7-7-6-7-11V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" fill="none" />
+          </svg>
+        );
+      }
+
+      function IconCar({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <path d="M3 13l2-5a3 3 0 012.8-2h8.4A3 3 0 0119 8l2 5v5h-2a2 2 0 01-4 0H9a2 2 0 01-4 0H3v-5z" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round" />
+            <path d="M7 16h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        );
+      }
+
+      function IconHelp({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M9.5 9.5a2.5 2.5 0 115 0c0 1.8-2.5 2-2.5 3.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            <circle cx="12" cy="17" r="1" fill="currentColor" />
+          </svg>
+        );
+      }
+
+      function IconShare({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <path d="M12 3v10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M9 6l3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          </svg>
+        );
+      }
+
+      function IconCalendarCheck({ size = 18, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M7 2v4M17 2v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M7 11l3 3 7-7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        );
+      }
+
+      function IconTrophy({ size = 20, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <path d="M7 4h10v2a5 5 0 01-10 0V4z" stroke="currentColor" strokeWidth="1.6" fill="none" />
+            <path d="M7 4H5a2 2 0 00-2 2v1a5 5 0 005 5" stroke="currentColor" strokeWidth="1.6" fill="none" />
+            <path d="M17 4h2a2 2 0 012 2v1a5 5 0 01-5 5" stroke="currentColor" strokeWidth="1.6" fill="none" />
+            <path d="M9 14h6v3H9z" stroke="currentColor" strokeWidth="1.6" fill="none" />
+            <path d="M7 20h10" stroke="currentColor" strokeWidth="1.6" />
+          </svg>
+        );
+      }
+
+      function IconHeart({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <path d="M12 21s-7-4.5-9-8a5.2 5.2 0 019-5 5.2 5.2 0 019 5c-2 3.5-9 8-9 8z" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round" />
+          </svg>
+        );
+      }
+
+      function IconFirstAid({ size = 16, color = "currentColor" }) {
+        return (
+          <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color }}>
+            <rect x="3" y="7" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" fill="none" />
+            <rect x="8" y="4" width="8" height="3" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+            <path d="M12 10v6M9 13h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        );
+      }
+
+      function Chip({ active, label, onClick, ariaLabel }) {
+        const p = config.brand.palette;
+        return (
+          <button
+            aria-label={ariaLabel}
+            onClick={onClick}
+            className="px-4 h-10 rounded-full border transition-all font-semibold text-sm shadow"
+            style={{
+              minWidth: `104px`,
+              background: active ? p.licBlue : "#fff",
+              color: active ? "#fff" : p.ink,
+              borderColor: active ? p.licGold : p.border,
+              boxShadow: active ? "0 8px 20px rgba(11,78,162,0.25)" : "0 4px 12px rgba(11,21,48,0.06)",
+            }}
+          >
+            <span>{label}</span>
+          </button>
+        );
+      }
+
+      function Tick({ age, selected, onClick, baselinePct }) {
+        const p = config.brand.palette;
+        const left = pctForAge(age);
+        return (
+          <button aria-label={`Age ${age}`} onClick={onClick} className="absolute" style={{ left: `${left}%`, top: `${baselinePct}%`, transform: "translate(-50%, 0)" }}>
+            <div style={{ width: 1, height: 12, background: selected ? p.licGold : p.border }} />
+            <div className="mt-1 text-[12px] font-semibold" style={{ color: selected ? p.licBlue : p.ink }}>{age}</div>
+          </button>
+        );
+      }
+
+      function SegmentInfo({ segment, tier }) {
+        const p = config.brand.palette;
+        if (segment === "pay") {
+          return (
+            <div className="rounded-2xl border p-3 grid grid-cols-3 gap-2" style={{ background: "#fff", borderColor: p.border }}>
+              <div className="flex items-center gap-2">
+                <IconCalendarCheck size={16} color={p.licBlue} />
+                <div className="text-[12px] font-semibold" style={{ color: p.ink }}>Monthly Premium: ₹{tier.monthly}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <IconHeart size={14} color={p.licBlue} />
+                <div className="text-[12px] font-semibold" style={{ color: p.ink }}>Risk Cover: {tier.natural_cover}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <IconFirstAid size={14} color={p.licBlue} />
+                <div className="text-[12px] font-semibold" style={{ color: p.ink }}>Accidental Cover: {tier.accidental_cover}</div>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div className="rounded-2xl border p-3" style={{ background: "#fff", borderColor: p.border }}>
+            <div className="flex items-center gap-2">
+              <IconShield size={16} color={p.licBlue} />
+              <div className="text-[12px] font-semibold" style={{ color: p.ink }}>Death Cover: {tier.lifetime_cover}</div>
+            </div>
+          </div>
+        );
+      }
+
+      function JeevanAnand715Interactive() {
+        const p = config.brand.palette;
+        const [activeTierId, setActiveTierId] = useState(config.screen.layout[0].active_default);
+        const [selectedAge, setSelectedAge] = useState(35);
+        const prevAge = usePrevious(selectedAge);
+        const canvasRef = useRef(null);
+
+        const activeTier = useMemo(() => (config.data_model.tiers.find((t) => t.id === activeTierId) || config.data_model.tiers[0]), [activeTierId]);
+
+        const { burst, doneRef } = useConfetti({ containerRef: canvasRef, colors: [p.licGold, p.licBlue, "#22c55e", "#60a5fa", "#a78bfa", "#ef4444"], count: 90 });
+
+        useEffect(() => { if (selectedAge === 50 && prevAge !== 50 && !doneRef.current) { burst(); doneRef.current = true; } }, [selectedAge, prevAge, burst, doneRef]);
+
+        const railHeightVH = config.screen.layout[1].height_vh;
+
+        const startPct = pctForAge(29);
+        const fiftyPct = pctForAge(50);
+        const endPct = pctForAge(100);
+        const relStart = relPctForAge(29);
+        const relFifty = relPctForAge(50);
+        const relEnd = 100;
+
+        const segment = selectedAge < 50 ? "pay" : "protect";
+
+        const rupeePattern = (() => {
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><text x='10' y='14' font-family='Inter, system-ui, -apple-system, Segoe UI, Roboto' font-size='12' text-anchor='middle' fill='${p.ink}' fill-opacity='0.08'>₹</text></svg>`;
+          return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+        })();
+
+        const shieldPattern = (() => {
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'><path d='M12 3l7 3v5c0 5-3.5 9.3-7 11-3.5-1.7-7-6-7-11V6l7-3z' stroke='${p.ink}' stroke-opacity='0.08' stroke-width='1.5' fill='none'/></svg>`;
+          return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+        })();
+
+        return (
+          <div ref={canvasRef} className="w-screen h-screen overflow-hidden" style={{ background: `linear-gradient(135deg, ${p.bgSoft}, #ffffff)`, color: p.ink, fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto" }} aria-label={`${config.product.plan_name} pitch screen`}>
+            <div className="px-3 pt-2 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black" style={{ background: p.licBlue, color: "#fff", boxShadow: "0 6px 16px rgba(11,78,162,0.25)" }}>LIC</div>
+                <div className="text-xs font-semibold" style={{ color: p.ink }}>{config.product.plan_name} • {config.product.plan_code}</div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button aria-label="Help" className="w-8 h-8 rounded-full border flex items-center justify-center" style={{ background: "#fff", borderColor: p.border, color: p.muted }}>
+                  <IconHelp size={16} />
+                </button>
+                <button aria-label="Share" className="w-8 h-8 rounded-full border flex items-center justify-center" style={{ background: "#fff", borderColor: p.border, color: p.muted }}>
+                  <IconShare size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="px-3 mt-2">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <div className="text-xs font-bold mb-1" style={{ color: p.ink }}>Choose Monthly Premium</div>
+                  <div className="flex items-center gap-2" role="group" aria-label="Monthly premium tier">
+                    {config.data_model.tiers.map((t) => (
+                      <Chip key={t.id} ariaLabel={`Monthly premium ${t.label}`} active={activeTierId === t.id} label={t.label} onClick={() => setActiveTierId(t.id)} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-3 mt-3">
+              <div className="text-xs font-semibold mb-2" style={{ color: p.muted }}>{config.product.tagline}</div>
+              <div className="relative rounded-2xl" aria-label="Plan timeline" style={{ height: `${railHeightVH}vh`, background: "#fff", boxShadow: "inset 0 0 0 1px rgba(238,210,123,0.9)", overflow: "hidden" }}>
+                <div className="absolute left-[7%] right-[7%] top-1/2 -translate-y-1/2 h-[24px] rounded-full" style={{ background: "#EEF2FF" }} />
+                <button aria-label="Premium segment" className="absolute top-1/2 -translate-y-1/2 h-[24px] rounded-l-full text-[10px] font-bold tracking-wide uppercase flex items-center justify-center"
+                  style={{ left: `${relStart}%`, width: `${relFifty - relStart}%`, backgroundColor: p.success, color: "#0b1a2a", backgroundImage: `${rupeePattern}`, backgroundSize: "20px 20px", backgroundRepeat: "repeat" }}
+                  onClick={() => setSelectedAge(35)}
+                >
+                  Premium Payments
+                </button>
+                <button aria-label="Coverage segment" className="absolute top-1/2 -translate-y-1/2 h-[24px] rounded-r-full text-[10px] font-bold tracking-wide uppercase flex items-center justify-center"
+                  style={{ left: `${relFifty}%`, width: `${relEnd - relFifty}%`, backgroundColor: p.railBlue2, color: "#fff", backgroundImage: `${shieldPattern}`, backgroundSize: "22px 22px", backgroundRepeat: "repeat" }}
+                  onClick={() => setSelectedAge(60)}
+                >
+                  Lifetime Coverage
+                </button>
+                <div className="absolute" style={{ left: `${fiftyPct}%`, top: "28%", bottom: "28%", transform: "translateX(-50%)" }}>
+                  <div className="w-0.5 h-full" style={{ background: p.licGold }} />
+                </div>
+                <div className="absolute" style={{ left: `${startPct}%`, top: "30%", transform: "translate(-50%, -100%)" }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "#fff", border: `1px solid ${p.border}`, boxShadow: "0 6px 16px rgba(0,0,0,0.08)" }}>
+                    <IconCalendarCheck size={18} color={p.licBlue} />
+                  </div>
+                </div>
+                <div className="absolute" style={{ left: `${startPct}%`, top: "72%", transform: "translate(-50%, 0)" }}>
+                  <div className="text-[11px] font-semibold" style={{ color: p.ink }}>₹{activeTier.monthly}/month</div>
+                </div>
+                <div className="absolute" style={{ left: `${fiftyPct}%`, top: "18%", transform: "translate(-50%, 0)" }}>
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: p.licGold, color: "#111827", boxShadow: "0 8px 18px rgba(245,193,61,0.35)" }}>
+                    <IconTrophy size={20} color="#111827" />
+                  </div>
+                </div>
+                <div className="absolute" style={{ left: `${fiftyPct}%`, top: "24%", transform: "translate(-50%, -100%)" }}>
+                  <div className="rounded-md border px-2 py-1 text-[11px] font-semibold" style={{ background: "#fff", color: p.ink, borderColor: p.border }}>Maturity & Premiums Stop</div>
+                </div>
+                <div className="absolute" style={{ left: `${fiftyPct + (endPct - fiftyPct) * 0.04}%`, top: "52%", transform: "translate(-50%, -50%)" }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "#fff", border: `1px solid ${p.border}`, boxShadow: "0 6px 16px rgba(0,0,0,0.08)" }}>
+                    <IconShield size={16} color={p.licBlue} />
+                  </div>
+                </div>
+                {config.data_model.ages.map((age) => (
+                  <Tick key={age} age={age} selected={age === selectedAge} onClick={() => setSelectedAge(age)} baselinePct={78} />
+                ))}
+              </div>
+              <div className="mt-2">
+                <SegmentInfo segment={segment} tier={activeTier} />
+              </div>
+            </div>
+
+            <div className="px-3 mt-3">
+              <div className="rounded-2xl border p-3" style={{ background: p.card, borderColor: p.border }}>
+                <div className="grid grid-cols-4 gap-2 items-end">
+                  <div className="col-span-2">
+                    <div className="text-[11px] font-semibold" style={{ color: p.muted }}>Total Maturity Benefit</div>
+                    <div className="text-2xl font-extrabold flex items-center gap-2" style={{ color: p.licBlue }}>
+                      <span>{activeTier.maturity}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <IconHeart size={14} color={p.licBlue} />
+                    <div>
+                      <div className="text-[11px] font-semibold" style={{ color: p.muted }}>Life Cover</div>
+                      <div className="text-base font-bold" style={{ color: p.ink }}>{activeTier.natural_cover}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <IconCar size={14} color={p.licBlue} />
+                    <div>
+                      <div className="text-[11px] font-semibold" style={{ color: p.muted }}>Accident Cover</div>
+                      <div className="text-base font-bold" style={{ color: p.ink }}>{activeTier.accidental_cover}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <IconCalendarCheck size={14} color={p.licBlue} />
+                    <div>
+                      <div className="text-[11px] font-semibold" style={{ color: p.muted }}>Monthly Premium</div>
+                      <div className="text-base font-bold" style={{ color: p.ink }}>₹{activeTier.monthly}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <button className="px-3 h-9 rounded-full text-xs font-semibold" style={{ background: p.licGold, color: "#111827", boxShadow: "0 6px 16px rgba(245,193,61,0.35)" }}>Get Personalized Quote</button>
+                  <button className="px-3 h-9 rounded-full text-xs font-semibold border" style={{ background: "#fff", color: p.ink, borderColor: p.border }}>Talk to an Advisor</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3" style={{ borderTop: `1px solid ${p.border}` }}>
+              <div className="px-3 py-2 text-[11px] italic text-center" style={{ color: p.muted }}>{config.copy.disclaimer}</div>
+            </div>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<JeevanAnand715Interactive />);
+    </script>
+  </body>
+</html>
 
