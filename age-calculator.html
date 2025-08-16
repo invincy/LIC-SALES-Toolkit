@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Age Calculator</title>
@@ -45,5 +45,6 @@
     function formatAge(a){let r='';if(a.years>0){r+=`<span style="font-size:1.5rem;">${a.years}</span> year${a.years!==1?'s':''}`}if(a.months>0){if(r)r+=', ';r+=`<span style="font-size:1.2rem;">${a.months}</span> month${a.months!==1?'s':''}`}if(a.days>0){if(r)r+=', ';r+=`<span>${a.days}</span> day${a.days!==1?'s':''}`}if(!r)r='<span style="font-size:1.2rem;">Born today! 🎉</span>';return r}
     function showFunFacts(b,t,c){const a=calculateAgeDetails(b,t);const nb=new Date(t.getFullYear(),b.getMonth(),b.getDate());if(nb<t)nb.setFullYear(t.getFullYear()+1);const daysTo=Math.ceil((nb-t)/(1000*60*60*24));c.innerHTML=`<div>📅 You've lived for <strong>${a.totalDays.toLocaleString()}</strong> days</div><div>📆 That's <strong>${a.totalWeeks.toLocaleString()}</strong> weeks</div><div>🗓️ Or <strong>${a.totalMonths}</strong> months total</div><div>🎈 Days until next birthday: <strong>${daysTo}</strong></div><div>⏰ You've experienced approximately <strong>${Math.floor(a.totalDays*24).toLocaleString()}</strong> hours of life!</div>`}
   </script>
+
 </body>
 </html>
