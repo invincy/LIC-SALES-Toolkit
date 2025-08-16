@@ -4,15 +4,19 @@ if (canvas) {
   let w, h;
   function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
   window.addEventListener('resize', resize); resize();
+
   const count = 120;
   const particles = Array.from({length:count}, () => ({
+
     x: Math.random()*w,
     y: Math.random()*h,
     vx: (Math.random()-0.5)*0.7,
     vy: (Math.random()-0.5)*0.7
   }));
+
   const color = getComputedStyle(document.documentElement).getPropertyValue('--particle') || 'rgba(255,221,0,0.9)';
   const maxDist = 120;
+
   (function draw(){
     ctx.clearRect(0,0,w,h);
     particles.forEach(p=>{
@@ -20,6 +24,7 @@ if (canvas) {
       if(p.x<0||p.x>w) p.vx*=-1;
       if(p.y<0||p.y>h) p.vy*=-1;
       ctx.fillStyle = color;
+
       ctx.shadowColor = color;
       ctx.shadowBlur = 12;
       ctx.beginPath();
@@ -42,6 +47,7 @@ if (canvas) {
         }
       }
     }
+
     requestAnimationFrame(draw);
   })();
 }
