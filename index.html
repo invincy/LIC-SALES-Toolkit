@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Client Manager</title>
+<style>
+  :root{
+    --bg:#0b0f14; --card:rgba(255,255,255,0.06); --cardBorder:rgba(255,255,255,0.12);
+    --text:#e8f7ff; --muted:#9fb6c3; --accent:#00e6ff;
+    --ok:#19d27a; --warn:#ffb020; --err:#ff4d4d;
+    --glow:0 0 18px rgba(0,230,255,0.55);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radial-gradient(1200px 900px at 10% 10%,#0e1420 0%,#0b0f14 60%,#090c11 100%);color:var(--text)}
+  .container{max-width:1100px;margin:28px auto;padding:0 16px}
+  .alert{margin-bottom:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.06);display:none}
+  .alert.err{border-color:#ff4d4d33}
+  .panel{background:var(--card);border:1px solid var(--cardBorder);backdrop-filter:blur(10px);border-radius:16px;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,0.35)}
+  .header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--cardBorder)}
+  .clickable{cursor:pointer;user-select:none}
+  .title{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;text-shadow:var(--glow)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:var(--glow)}
+  .actions{display:flex;gap:8px;align-items:center}
+  .btn{border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .btn.neon{border-color:rgba(0,230,255,.5);color:#c8f9ff;box-shadow:var(--glow)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .badge{min-width:28px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,230,255,.35);background:linear-gradient(to bottom right,rgba(0,230,255,.18),rgba(0,230,255,.05));font-weight:700;color:#c8f9ff;box-shadow:var(--glow)}
+  .content{padding:8px 0}
+  .hide{display:none}
+
+  .table-wrap{overflow:auto;max-height:58vh}
+  table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--cardBorder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  th{position:sticky;top:0;background:rgba(8,12,18,0.8);backdrop-filter:blur(6px);text-align:left;color:#cfe6f1}
+  tr{transition:background .2s}
+  tr:hover{background:rgba(255,255,255,0.05)}
+  .muted{color:var(--muted)}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);font-size:12px}
+
+  /* Inline profile drawer */
+  .drawer{border-top:1px solid var(--cardBorder);background:rgba(255,255,255,0.04)}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--cardBorder)}
+  .section-title{margin:10px 16px 4px;font-weight:700;font-size:14px;color:#d9f6ff}
+  .form{display:grid;gap:10px;padding:14px 16px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  label{font-size:12px;color:#b7c7d1}
+  input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.04);color:var(--text);outline:none}
+  .list{padding:6px 16px 16px;display:grid;gap:10px}
+  .policy{display:grid;gap:6px;padding:10px;border:1px dashed var(--cardBorder);border-radius:12px}
+  .hint{font-size:12px;color:var(--muted)}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+
+  /* Tools */
+  .tools{margin-top:16px}
+  .tools-grid{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .tool-card{border:1px dashed var(--cardBorder);border-radius:12px;padding:16px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+
+  /* Modal */
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:50}
+  .backdrop.show{display:flex}
+  .modal-panel{width:min(650px,92vw)}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="alert" class="alert err"></div>
+
+  <!-- Clients (single column) -->
+  <div class="panel" id="clientsPanel">
+    <div class="header clickable" id="toggleClients">
+      <div class="title"><span class="dot"></span> Clients</div>
+      <div class="actions">
+        <button class="btn" id="refreshBtn">Refresh</button>
+        <button class="btn neon" id="addClientBtn">+ Add Client</button>
+        <span class="badge" id="clientCount">0</span>
+      </div>
+    </div>
+    <div class="content hide" id="clientsContent">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28%">Name</th>
+              <th style="width:16%">Phone</th>
+              <th style="width:22%">Email</th>
+              <th style="width:12%">DOB</th>
+              <th style="width:14%">Occupation</th>
+              <th style="width:8%">Policies</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Inline profile drawer -->
+      <div id="drawer" class="drawer hide">
+        <div class="drawer-head">
+          <div id="drawerTitle">Profile</div>
+          <div class="actions" id="drawerActions"></div>
+        </div>
+        <div id="drawerBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="panel tools">
+    <div class="header">
+      <div class="title"><span class="dot"></span> Tools (coming soon)</div>
+      <div class="actions"><span class="hint">Upload/embed utilities here later</span></div>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card">Slot 1</div>
+      <div class="tool-card">Slot 2</div>
+      <div class="tool-card">Slot 3</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div id="newClientBackdrop" class="backdrop">
+  <div class="panel modal-panel">
+    <div class="header">
+      <div class="title"><span class="dot"></span> Add New Client</div>
+      <button class="btn" id="closeNewClient">✕</button>
+    </div>
+    <div class="form">
+      <div class="row">
+        <div><label>Name</label><input id="nc_name" placeholder="Full name"></div>
+        <div><label>Phone</label><input id="nc_phone" placeholder="Phone"></div>
+      </div>
+      <div class="row">
+        <div><label>Email</label><input id="nc_email" placeholder="Email"></div>
+        <div><label>DOB</label><input id="nc_dob" type="date"></div>
+      </div>
+      <div class="row">
+        <div><label>Occupation</label><input id="nc_occupation" placeholder="Occupation"></div>
+        <div><label>Address</label><input id="nc_address" placeholder="Address"></div>
+      </div>
+      <div class="actions" style="padding:0 16px 16px;">
+        <button class="btn neon" id="createClientBtn">Save Client</button>
+        <span class="hint" id="nc_hint"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== CONFIG (wired to your deployment) =====
+  const DEPLOYMENT_ID = "AKfycbybj_31j03fUk0MPuBbtEM57Ql1wa3wXgMokR95ZgzJMjzK8gXpU1DsWDB4f9iFsggO";
+  const BASE_URL = `https://script.google.com/macros/s/${DEPLOYMENT_ID}/exec`;
+
+  // ===== STATE =====
+  let clients = [];
+  let policies = [];
+  let policiesByClient = new Map();
+  let selected = null;
+  let originalName = null;
+  let editMode = false;
+
+  // ===== DOM =====
+  const alertBox = document.getElementById('alert');
+  const toggleClients = document.getElementById('toggleClients');
+  const clientsContent = document.getElementById('clientsContent');
+  const clientCount = document.getElementById('clientCount');
+  const clientsTbody = document.getElementById('clientsTbody');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const addClientBtn = document.getElementById('addClientBtn');
+
+  const drawer = document.getElementById('drawer');
+  const drawerTitle = document.getElementById('drawerTitle');
+  const drawerActions = document.getElementById('drawerActions');
+  const drawerBody = document.getElementById('drawerBody');
+
+  const backdrop = document.getElementById('newClientBackdrop');
+  const closeNewClient = document.getElementById('closeNewClient');
+  const createClientBtn = document.getElementById('createClientBtn');
+  const nc_hint = document.getElementById('nc_hint');
+
+  // Collapsible
+  toggleClients.addEventListener('click', ()=> clientsContent.classList.toggle('hide'));
+
+  // Modal
+  function openModal(){ backdrop.classList.add('show'); }
+  function closeModal(){ backdrop.classList.remove('show'); }
+  addClientBtn.addEventListener('click', openModal);
+  closeNewClient.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) closeModal(); });
+
+  // API helpers with robust errors
+  async function apiGet(){
+    try{
+      const r = await fetch(BASE_URL, { method:'GET', cache:'no-store' });
+      if(!r.ok) throw new Error(`GET ${r.status}`);
+      return await r.json();
+    }catch(e){
+      showError(`Could not reach backend. Check Web App access is "Anyone with the link". Details: ${e.message}`);
+      throw e;
+    }
+  }
+  async function apiPost(payload){
+  try{
+    const r = await fetch(BASE_URL, {
+      method: 'POST',
+      // keep it simple to avoid CORS preflight
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
+    // If Apps Script throws, r.ok can be false but it still returns JSON
+    const json = await r.json().catch(() => ({}));
+    if (!r.ok || json.ok === false) {
+      const msg = (json && (json.error || json.message)) || `POST ${r.status}`;
+      throw new Error(msg);
+    }
+    return json;
+  }catch(e){
+    showError(`Request failed: ${e.message}`);
+    throw e;
+  }
+}
+
+
+  function showError(msg){
+    alertBox.textContent = msg;
+    alertBox.style.display = 'block';
+  }
+  function clearError(){
+    alertBox.style.display = 'none';
+    alertBox.textContent = '';
+  }
+
+  // Index policies
+  function indexPolicies(){
+    policiesByClient = new Map();
+    for(const p of (policies||[])){
+      const k = (p.clientname || '').trim();
+      if(!k) continue;
+      if(!policiesByClient.has(k)) policiesByClient.set(k, []);
+      policiesByClient.get(k).push(p);
+    }
+  }
+
+  // Table
+  function renderClientsTable(){
+    clientCount.textContent = String(clients.length);
+    clientsTbody.innerHTML = '';
+    const sorted = [...clients].sort((a,b)=> String(a.name||'').localeCompare(String(b.name||'')));
+    for(const c of sorted){
+      const count = (policiesByClient.get((c.name||'').trim()) || []).length;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${esc(c.name)}</td>
+        <td class="muted">${esc(c.phone)}</td>
+        <td class="muted">${esc(c.email)}</td>
+        <td class="muted">${esc(dateFromSheet(c.dob))}</td>
+        <td class="muted">${esc(c.occupation)}</td>
+        <td><span class="pill">Policies <strong>${count}</strong></span></td>
+      `;
+      tr.addEventListener('click', ()=> openDrawer(c));
+      tr.contentEditable = "false";
+      clientsTbody.appendChild(tr);
+    }
+  }
+
+  // Drawer (inline profile)
+  function setDrawerActions(inEdit){
+    drawerActions.innerHTML = '';
+    const hint = document.createElement('span'); hint.className='hint'; hint.id='drawerHint';
+    if(inEdit){
+      drawerActions.append(btn('Save', saveClient, true), btn('Cancel', ()=> openDrawer(selected, false), false), hint);
+    }else{
+      drawerActions.append(btn('Edit', ()=> openDrawer(selected, true), true), btn('Close', closeDrawer, false), hint);
+    }
+  }
+  function btn(label, onClick, neon){
+    const b = document.createElement('button');
+    b.className = 'btn' + (neon ? ' neon' : '');
+    b.textContent = label; b.onclick = onClick; return b;
+  }
+
+  function openDrawer(c, startEdit=false){
+    selected = structuredClone(c);
+    originalName = c.name;
+    editMode = !!startEdit;
+
+    drawerTitle.textContent = c.name || 'Profile';
+    setDrawerActions(editMode);
+
+    const ro = editMode ? '' : 'disabled';
+    const plist = (policiesByClient.get((c.name||'').trim()) || []);
+
+    drawerBody.innerHTML = `
+      <div class="section-title">Client Details</div>
+      <div class="form">
+        <div class="row">
+          <div><label>Name</label><input id="cf_name" ${ro} value="${escAttr(selected.name)}"></div>
+          <div><label>Phone</label><input id="cf_phone" ${ro} value="${escAttr(selected.phone)}"></div>
+        </div>
+        <div class="row">
+          <div><label>Email</label><input id="cf_email" ${ro} value="${escAttr(selected.email)}"></div>
+          <div><label>DOB</label><input id="cf_dob" type="date" ${ro} value="${dateForInput(selected.dob)}"></div>
+        </div>
+        <div class="row">
+          <div><label>Occupation</label><input id="cf_occupation" ${ro} value="${escAttr(selected.occupation)}"></div>
+          <div><label>Address</label><input id="cf_address" ${ro} value="${escAttr(selected.address)}"></div>
+        </div>
+      </div>
+
+      <div class="section-title">Policies (${plist.length})</div>
+      <div class="list">
+        ${plist.length ? plist.map(p => `
+          <div class="policy">
+            <div><strong>Policy No:</strong> ${esc(p.policyno || '-')}</div>
+            <div class="row">
+              <div><label>Sum Assured</label><input disabled value="${escAttr(p.sumassured||'')}"></div>
+              <div><label>Premium</label><input disabled value="${escAttr(p.premium||'')}"></div>
+            </div>
+            <div class="row">
+              <div><label>Mode</label><input disabled value="${escAttr(p.mode||'')}"></div>
+              <div><label>DOC</label><input disabled value="${escAttr(dateFromSheet(p.doc))}"></div>
+            </div>
+            <div class="row">
+              <div><label>Nominee</label><input disabled value="${escAttr(p.nominee||'')}"></div>
+              <div><label>NEFT</label><input disabled value="${escAttr(p.neft||'')}"></div>
+            </div>
+          </div>
+        `).join('') : `<div class="hint" style="padding:0 16px 12px;">No policies yet.</div>`}
+      </div>
+
+      <div class="section-title">Add Policy</div>
+      <div class="form" id="policyForm">
+        <div class="row">
+          <div><label>Policy No</label><input id="pf_policyno" placeholder="e.g., 1234567890"></div>
+          <div><label>Sum Assured</label><input id="pf_sumassured" placeholder="e.g., 500000"></div>
+        </div>
+        <div class="row">
+          <div><label>Premium</label><input id="pf_premium" placeholder="e.g., 12000/yr"></div>
+          <div>
+            <label>Mode</label>
+            <select id="pf_mode">
+              <option value="">Select</option>
+              <option>Monthly</option><option>Quarterly</option><option>Half-yearly</option><option>Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div><label>DOC</label><input id="pf_doc" type="date"></div>
+          <div><label>Nominee</label><input id="pf_nominee" placeholder="Nominee name"></div>
+        </div>
+        <div class="row">
+          <div><label>NEFT</label><input id="pf_neft" placeholder="Yes/No or details"></div>
+          <div style="display:flex;align-items:end;gap:10px;">
+            <button class="btn neon" id="addPolicyNow">Add Policy</button>
+            <span class="hint" id="pf_hint"></span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('addPolicyNow').addEventListener('click', onAddPolicy);
+    drawer.classList.remove('hide');
+    // ensure clients section is open so user sees drawer
+    clientsContent.classList.remove('hide');
+  }
+
+  function closeDrawer(){ drawer.classList.add('hide'); selected=null; }
+
+  async function saveClient(){
+    const hint = document.getElementById('drawerHint');
+    const payload = {
+      fn:'editClient',
+      originalName,
+      name: gv('cf_name').trim(),
+      phone: gv('cf_phone').trim(),
+      email: gv('cf_email').trim(),
+      dob: gv('cf_dob'),
+      occupation: gv('cf_occupation').trim(),
+      address: gv('cf_address').trim()
+    };
+    if(!payload.name){ hint.textContent='Name is required.'; hint.className='hint err'; return; }
+    setBusy(drawerActions,true); hint.textContent='Saving...'; hint.className='hint';
+    try{
+      const res = await apiPost(payload);
+      if(!res.ok) throw new Error(res.error || 'Save failed');
+      hint.textContent='Saved ✓'; hint.className='hint ok';
+      await loadData();
+      const keep = clients.find(x => String(x.name).trim() === String(payload.name).trim()) || null;
+      if(keep) openDrawer(keep,false); else closeDrawer();
+    }catch(e){
+      hint.textContent=e.message; hint.className='hint err';
+    }finally{
+      setBusy(drawerActions,false);
+    }
+  }
+
+  async function onAddPolicy(){
+    const hint = document.getElementById('pf_hint');
+    const btn = document.getElementById('addPolicyNow');
+    const payload = {
+      fn:'addPolicy',
+      clientname: selected?.name || '',
+      policyno: gv('pf_policyno').trim(),
+      sumassured: gv('pf_sumassured').trim(),
+      premium: gv('pf_premium').trim(),
+      mode: gv('pf_mode').trim(),
+      doc: gv('pf_doc'),
+      nominee: gv('pf_nominee').trim(),
+      neft: gv('pf_neft').trim()
+    };
+    if(!payload.clientname){ hint.textContent='Client missing.'; hint.className='hint err'; return; }
+    if(!payload.policyno){ hint.textContent='Policy No is required.'; hint.className='hint err'; return; }
+    btn.disabled=true; hint.textContent='Saving...'; hint.className='hint';
+    try{
+      const res = await apiPost(payload);
+      if(!res.ok) throw new Error(res.error || 'Add failed');
+      hint.textContent='Policy added ✓'; hint.className='hint ok';
+      await loadData();
+      const keep = clients.find(x => String(x.name).trim() === String(selected.name).trim());
+      if(keep) openDrawer(keep,false);
+    }catch(e){
+      hint.textContent=e.message; hint.className='hint err';
+    }finally{ btn.disabled=false; }
+  }
+
+  // Add Client
+  createClientBtn.addEventListener('click', async ()=>{
+    const payload = {
+      fn:'addClient',
+      name: gv('nc_name').trim(),
+      phone: gv('nc_phone').trim(),
+      email: gv('nc_email').trim(),
+      dob: gv('nc_dob'),
+      occupation: gv('nc_occupation').trim(),
+      address: gv('nc_address').trim()
+    };
+    if(!payload.name){ nc_hint.textContent='Name is required.'; nc_hint.className='hint err'; return; }
+    createClientBtn.disabled=true; nc_hint.textContent='Saving...'; nc_hint.className='hint';
+    try{
+      const res = await apiPost(payload);
+      if(!res.ok) throw new Error(res.error || 'Add failed');
+      nc_hint.textContent='Saved ✓'; nc_hint.className='hint ok';
+      setTimeout(closeModal, 250);
+      ['nc_name','nc_phone','nc_email','nc_dob','nc_occupation','nc_address'].forEach(id=> setVal(id,''));
+      await loadData();
+      clientsContent.classList.remove('hide');
+    }catch(e){
+      nc_hint.textContent=e.message; nc_hint.className='hint err';
+    }finally{ createClientBtn.disabled=false; }
+  });
+
+  refreshBtn.addEventListener('click', loadData);
+
+  // Load data
+  async function loadData(){
+    clearError();
+    try{
+      const res = await apiGet();
+      // guard for shape
+      const ok = res && (res.ok === true || res.ok === undefined); // your doGet returns ok:true
+      const cRows = Array.isArray(res.clients) ? res.clients : [];
+      const pRows = Array.isArray(res.policies) ? res.policies : [];
+      if(!ok){ throw new Error(res.error || 'Backend returned not-ok'); }
+
+      clients = cRows;
+      policies = pRows;
+      indexPolicies();
+      renderClientsTable();
+      // keep drawer if same client still exists
+      if(selected){
+        const keep = clients.find(x => String(x.name).trim() === String(selected.name||'').trim());
+        if(keep) openDrawer(keep,false); else closeDrawer();
+      }
+      if(!clients.length){
+        showError('No clients found. Add one using “+ Add Client”. If you expected data, check your sheet headers match exactly.');
+      }
+    }catch(e){
+      // error already surfaced
+    }
+  }
+
+  // Utils
+  function gv(id){ return (document.getElementById(id)?.value || '') }
+  function setVal(id,v){ const el=document.getElementById(id); if(el) el.value=v; }
+  function setBusy(el, b){ el.querySelectorAll('button').forEach(x=>x.disabled=b); }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function dateFromSheet(v){
+    if(v===null || v===undefined || v==='') return '';
+    const d = new Date(v); if(!isNaN(d)) return d.toISOString().slice(0,10);
+    const num = Number(v); if(!isNaN(num) && num>0){ return gsSerialToISO(num); }
+    const m = String(v).match(/(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+    if(m){ let [_,a,b,c]=m; return (a.length===4)?`${a}-${b.padStart(2,'0')}-${c.padStart(2,'0')}`:`${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`; }
+    return '';
+  }
+  function dateForInput(v){ return dateFromSheet(v); }
+  function gsSerialToISO(serial){
+    const base = new Date(Date.UTC(1899,11,30));
+    const d = new Date(base.getTime() + serial*86400000);
+    return d.toISOString().slice(0,10);
+  }
+
+  // Boot
+  loadData();
+</script>
+</body>
+</html>
