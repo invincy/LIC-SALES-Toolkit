@@ -1,5 +1,5 @@
 const canvas = document.getElementById('particles');
-if (canvas) {
+if (canvas) { 
   const ctx = canvas.getContext('2d');
   let w, h;
   function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
