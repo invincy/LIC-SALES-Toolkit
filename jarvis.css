@@ -59,9 +59,8 @@ input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px
 .warn{color:var(--warn)}
 .err{color:var(--err)}
 .tools{margin-top:16px}
-.tools-grid{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 
-.tool-card{border:1px solid rgba(11,78,162,0.6);border-radius:12px;padding:16px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--accent);text-decoration:none;background:rgba(11,78,162,0.1);box-shadow:0 0 12px rgba(11,78,162,0.6)}
+.tools-grid{padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2rem}
 
 .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:50}
 .backdrop.show{display:flex}
@@ -70,7 +69,6 @@ input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px
 .contact{text-align:center;margin-top:.5rem}
 .contact a{color:var(--accent);text-decoration:none;margin:0 .5rem}
 .contact a:hover{text-shadow:0 0 5px var(--accent)}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2rem}
 
 .tool{display:flex;align-items:center;justify-content:center;padding:1.5rem;text-decoration:none;color:var(--accent);background:rgba(11,78,162,0.1);border:1px solid rgba(11,78,162,0.6);border-radius:12px;transition:.3s;box-shadow:0 0 12px rgba(11,78,162,0.6)}
 .tool:hover{background:rgba(11,78,162,0.2);box-shadow:0 0 20px var(--accent)}
