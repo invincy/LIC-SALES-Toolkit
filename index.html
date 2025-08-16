@@ -77,16 +77,6 @@
       <a href="715/index.html" class="tool">Jeevan Anand (715)</a>
     </div>
   </div>
-
-  <!-- Plans -->
-  <div class="panel tools">
-    <div class="header">
-      <div class="title"><span class="dot"></span> Plans</div>
-    </div>
-    <div class="tools-grid">
-      <a href="715/index.html" class="tool-card">Jeevan Anand (715)</a>
-    </div>
-  </div>
 </div>
 
 <!-- Add Client Modal -->
@@ -118,31 +108,6 @@
 </div>
 
 <script src="particles.js"></script>
-
-
-
-
-<script>
-  const pCanvas=document.getElementById('particles');
-  const pCtx=pCanvas.getContext('2d');
-  let pw,ph;
-  function pResize(){pw=pCanvas.width=innerWidth;ph=pCanvas.height=innerHeight;}
-  window.addEventListener('resize',pResize);pResize();
-  const particles=Array.from({length:80},()=>({x:Math.random()*pw,y:Math.random()*ph,vx:(Math.random()-0.5)*0.7,vy:(Math.random()-0.5)*0.7}));
-  (function drawParticles(){
-    pCtx.clearRect(0,0,pw,ph);
-    particles.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0||p.x>pw) p.vx*=-1;
-      if(p.y<0||p.y>ph) p.vy*=-1;
-      pCtx.fillStyle='rgba(0,230,255,0.7)';
-      pCtx.beginPath();
-      pCtx.arc(p.x,p.y,2,0,Math.PI*2);
-      pCtx.fill();
-    });
-    requestAnimationFrame(drawParticles);
-  })();
-</script>
 
 
 <script>
