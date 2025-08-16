@@ -2,7 +2,9 @@
   --bg:#fff8c4;
   --card:rgba(0,123,255,0.1);
   --cardBorder:rgba(0,123,255,0.35);
+
   --text:#ffe680;
+
   --muted:#9fb6c3;
   --accent:#0B4EA2;
   --ok:#19d27a;
@@ -13,8 +15,10 @@
 
 }
 *{box-sizing:border-box}
+
 body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background-color:#080c12;background-image:radial-gradient(circle at 20% 20%,rgba(255,230,102,0.15),transparent 60%),radial-gradient(circle at 80% 80%,rgba(255,230,102,0.1),transparent 40%);color:var(--text);text-shadow:0 0 8px var(--text),0 0 16px rgba(255,223,0,0.5)}
 #particles{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at center,rgba(255,230,102,0.05),transparent 70%)}
+
 .container{max-width:1100px;margin:28px auto;padding:0 16px}
 .alert{margin-bottom:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.06);display:none}
 .alert.err{border-color:#ff4d4d33}
@@ -23,6 +27,7 @@ body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background-color
 
 .header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--cardBorder)}
 .clickable{cursor:pointer;user-select:none}
+
 .title{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;color:var(--text);text-shadow:0 0 10px var(--text),0 0 20px rgba(255,223,0,0.6)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:var(--glow)}
 actions{display:flex;gap:8px;align-items:center}
@@ -35,12 +40,15 @@ actions{display:flex;gap:8px;align-items:center}
 .hide{display:none}
 @keyframes glow{from{text-shadow:0 0 8px rgba(255,223,0,0.7)}to{text-shadow:0 0 18px rgba(255,223,0,1)}}
 .jarvis-title,.jarvis-subtitle{text-align:center;color:var(--text);animation:glow 2s ease-in-out infinite alternate;text-shadow:0 0 10px var(--text),0 0 20px rgba(255,223,0,0.6)}
+
 .jarvis-title{margin-top:24px;font-size:2.5em}
 .jarvis-subtitle{font-size:1.5em;margin-bottom:24px}
 .table-wrap{overflow:auto;max-height:58vh}
 table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
 th,td{padding:12px 14px;border-bottom:1px solid var(--cardBorder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 th{position:sticky;top:0;background:rgba(8,12,18,0.8);backdrop-filter:blur(6px);text-align:left;color:var(--text);text-shadow:0 0 6px var(--text)}
+
 tr{transition:background .2s}
 tr:hover{background:rgba(255,255,255,0.05)}
 .muted{color:var(--muted)}
@@ -67,10 +75,12 @@ input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px
 .modal-panel{width:min(650px,92vw)}
 .result{margin-top:1rem;font-size:1.2rem}
 .contact{text-align:center;margin-top:.5rem}
+
 .contact a{color:var(--text);text-decoration:none;margin:0 .5rem;text-shadow:0 0 8px var(--text)}
 .contact a:hover{text-shadow:0 0 10px var(--text)}
 
 .tool{display:flex;align-items:center;justify-content:center;padding:1.5rem;text-decoration:none;color:var(--text);background:rgba(11,78,162,0.1);border:1px solid rgba(11,78,162,0.6);border-radius:12px;transition:.3s;box-shadow:0 0 12px rgba(11,78,162,0.6);text-shadow:0 0 8px var(--text)}
+
 .tool:hover{background:rgba(11,78,162,0.2);box-shadow:0 0 20px var(--accent)}
 
 .card-container{max-width:800px;margin:4rem auto;padding:2rem;background:var(--card);border:1px solid var(--cardBorder);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(11,78,162,0.2)}
