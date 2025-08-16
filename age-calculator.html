@@ -1,216 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+  <style>
+    body{margin:0;background:#000;color:#00eaff;font-family:Arial,sans-serif;overflow:hidden}
+    #particles{position:fixed;inset:0;z-index:-1}
+    .container{max-width:600px;margin:4rem auto;padding:2rem;background:rgba(255,255,255,.05);border:1px solid rgba(0,234,255,.3);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(0,234,255,.2)}
+    h1{text-align:center;margin-top:0}
+    label{display:block;margin-top:1rem;margin-bottom:.5rem}
+    input{width:100%;padding:.8rem;background:rgba(0,0,0,.4);border:1px solid #00eaff;border-radius:8px;color:#00eaff}
+    input:focus{outline:none;box-shadow:0 0 10px #00eaff}
+    .result{margin-top:1rem;font-size:1.2rem}
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-8">
-    <div class="max-w-2xl mx-auto px-4">
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">🎂 Age Calculator</h1>
-            
-            <!-- Birth Date Input -->
-            <div class="mb-6">
-                <label for="birthDate" class="block text-lg font-semibold text-gray-700 mb-3">
-                    Enter your birth date (DDMMYYYY):
-                </label>
-                <input 
-                    type="text" 
-                    id="birthDate" 
-                    placeholder="02011996"
-                    maxlength="8"
-                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-lg font-mono tracking-wider"
-                    oninput="formatDateInput(this); calculateAge()"
-                >
-                <div class="text-sm text-gray-500 mt-1">Format: Day Month Year (e.g., 02011996 for 2nd January 1996)</div>
-            </div>
-
-            <!-- Age Today Section -->
-            <div class="bg-blue-50 rounded-xl p-6 mb-6">
-                <h2 class="text-xl font-semibold text-blue-800 mb-3">Your Age Today</h2>
-                <div id="ageToday" class="text-2xl font-bold text-blue-600">
-                    Please enter your birth date
-                </div>
-            </div>
-
-            <!-- Custom Date Section -->
-            <div class="bg-green-50 rounded-xl p-6">
-                <h2 class="text-xl font-semibold text-green-800 mb-3">Your Age on a Specific Date</h2>
-                <div class="mb-4">
-                    <label for="customDate" class="block text-md font-medium text-gray-700 mb-2">
-                        Enter a date (DDMMYYYY):
-                    </label>
-                    <input 
-                        type="text" 
-                        id="customDate" 
-                        placeholder="15062024"
-                        maxlength="8"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none text-lg font-mono tracking-wider"
-                        oninput="formatDateInput(this); calculateAge()"
-                    >
-                    <div class="text-sm text-gray-500 mt-1">Format: Day Month Year (e.g., 15062024 for 15th June 2024)</div>
-                </div>
-                <div id="ageOnDate" class="text-2xl font-bold text-green-600">
-                    Select a date to see your age
-                </div>
-            </div>
-
-            <!-- Additional Info -->
-            <div id="additionalInfo" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">Fun Facts:</h3>
-                <div id="funFacts" class="text-gray-600 space-y-1"></div>
-            </div>
-        </div>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="container">
+    <h1>🎂 Age Calculator</h1>
+    <label for="birthDate">Enter your birth date (DDMMYYYY):</label>
+    <input type="text" id="birthDate" maxlength="8" placeholder="02011996" oninput="formatDateInput(this);calculateAge();">
+    <div id="ageToday" class="result">Please enter your birth date</div>
+    <hr style="border-color:rgba(0,234,255,.2);margin:2rem 0;">
+    <label for="customDate">Enter a date (DDMMYYYY):</label>
+    <input type="text" id="customDate" maxlength="8" placeholder="15062024" oninput="formatDateInput(this);calculateAge();">
+    <div id="ageOnDate" class="result">Select a date to see your age</div>
+    <div id="additionalInfo" style="display:none;margin-top:2rem;">
+      <h3>Fun Facts:</h3>
+      <div id="funFacts"></div>
     </div>
+  </div>
+  <script>
+    const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
+    function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+    window.addEventListener('resize',resize);resize();
+    const particles=[];for(let i=0;i<60;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,size:2+Math.random()*2})}
+    function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(0,234,255,.5)';ctx.fill()});requestAnimationFrame(draw)}
+    draw();
+    function formatDateInput(input){input.value=input.value.replace(/[^0-9]/g,'')}
+    function parseCustomDate(str){if(str.length!==8)return null;const d=parseInt(str.slice(0,2)),m=parseInt(str.slice(2,4)),y=parseInt(str.slice(4,8));if(d<1||d>31||m<1||m>12||y<1900||y>2100)return null;const date=new Date(y,m-1,d);if(date.getDate()!==d||date.getMonth()!==m-1||date.getFullYear()!==y)return null;return date}
+    function calculateAge(){const birth=document.getElementById('birthDate'),custom=document.getElementById('customDate'),todayDiv=document.getElementById('ageToday'),onDateDiv=document.getElementById('ageOnDate'),info=document.getElementById('additionalInfo'),facts=document.getElementById('funFacts');if(!birth.value||birth.value.length!==8){todayDiv.textContent='Please enter your birth date (8 digits)';onDateDiv.textContent='Select a date to see your age';info.style.display='none';return}const birthDate=parseCustomDate(birth.value);if(!birthDate){todayDiv.innerHTML='<span style="color:#ff4d4d;">Invalid birth date format!</span>';onDateDiv.textContent='Select a date to see your age';info.style.display='none';return}const today=new Date();todayDiv.innerHTML=formatAge(calculateAgeDetails(birthDate,today));if(custom.value&&custom.value.length===8){const customDate=parseCustomDate(custom.value);if(!customDate){onDateDiv.innerHTML='<span style="color:#ff4d4d;">Invalid date format!</span>'}else if(customDate<birthDate){onDateDiv.innerHTML='<span style="color:#ff4d4d;">Date is before birth date!</span>'}else{onDateDiv.innerHTML=formatAge(calculateAgeDetails(birthDate,customDate))}}else{onDateDiv.textContent='Select a date to see your age'}showFunFacts(birthDate,today,facts);info.style.display='block'}
+    function calculateAgeDetails(b,t){let y=t.getFullYear()-b.getFullYear(),m=t.getMonth()-b.getMonth(),d=t.getDate()-b.getDate();if(d<0){m--;const lm=new Date(t.getFullYear(),t.getMonth(),0);d+=lm.getDate()}if(m<0){y--;m+=12}const totalDays=Math.floor((t-b)/(1000*60*60*24)),totalWeeks=Math.floor(totalDays/7),totalMonths=y*12+m;return{years:y,months:m,days:d,totalDays,totalWeeks,totalMonths}}
+    function formatAge(a){let r='';if(a.years>0){r+=`<span style="font-size:1.5rem;">${a.years}</span> year${a.years!==1?'s':''}`}if(a.months>0){if(r)r+=', ';r+=`<span style="font-size:1.2rem;">${a.months}</span> month${a.months!==1?'s':''}`}if(a.days>0){if(r)r+=', ';r+=`<span>${a.days}</span> day${a.days!==1?'s':''}`}if(!r)r='<span style="font-size:1.2rem;">Born today! 🎉</span>';return r}
+    function showFunFacts(b,t,c){const a=calculateAgeDetails(b,t);const nb=new Date(t.getFullYear(),b.getMonth(),b.getDate());if(nb<t)nb.setFullYear(t.getFullYear()+1);const daysTo=Math.ceil((nb-t)/(1000*60*60*24));c.innerHTML=`<div>📅 You've lived for <strong>${a.totalDays.toLocaleString()}</strong> days</div><div>📆 That's <strong>${a.totalWeeks.toLocaleString()}</strong> weeks</div><div>🗓️ Or <strong>${a.totalMonths}</strong> months total</div><div>🎈 Days until next birthday: <strong>${daysTo}</strong></div><div>⏰ You've experienced approximately <strong>${Math.floor(a.totalDays*24).toLocaleString()}</strong> hours of life!</div>`}
+  </script>
 
-    <script>
-        function formatDateInput(input) {
-            // Only allow numbers
-            input.value = input.value.replace(/[^0-9]/g, '');
-        }
-
-        function parseCustomDate(dateString) {
-            if (dateString.length !== 8) return null;
-            
-            const day = parseInt(dateString.substring(0, 2));
-            const month = parseInt(dateString.substring(2, 4));
-            const year = parseInt(dateString.substring(4, 8));
-            
-            // Basic validation
-            if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
-                return null;
-            }
-            
-            // Create date (month is 0-indexed in JavaScript)
-            const date = new Date(year, month - 1, day);
-            
-            // Check if the date is valid (handles invalid dates like 31st February)
-            if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
-                return null;
-            }
-            
-            return date;
-        }
-
-        function calculateAge() {
-            const birthDateInput = document.getElementById('birthDate');
-            const customDateInput = document.getElementById('customDate');
-            const ageTodayDiv = document.getElementById('ageToday');
-            const ageOnDateDiv = document.getElementById('ageOnDate');
-            const additionalInfoDiv = document.getElementById('additionalInfo');
-            const funFactsDiv = document.getElementById('funFacts');
-
-            if (!birthDateInput.value || birthDateInput.value.length !== 8) {
-                ageTodayDiv.innerHTML = 'Please enter your birth date (8 digits)';
-                ageOnDateDiv.innerHTML = 'Enter a date to see your age';
-                additionalInfoDiv.classList.add('hidden');
-                return;
-            }
-
-            const birthDate = parseCustomDate(birthDateInput.value);
-            if (!birthDate) {
-                ageTodayDiv.innerHTML = '<span class="text-red-500">Invalid birth date format!</span>';
-                ageOnDateDiv.innerHTML = 'Enter a date to see your age';
-                additionalInfoDiv.classList.add('hidden');
-                return;
-            }
-
-            const today = new Date();
-
-            // Calculate age today
-            const ageToday = calculateAgeDetails(birthDate, today);
-            ageTodayDiv.innerHTML = formatAge(ageToday);
-
-            // Calculate age on custom date if provided
-            if (customDateInput.value && customDateInput.value.length === 8) {
-                const customDate = parseCustomDate(customDateInput.value);
-                
-                if (!customDate) {
-                    ageOnDateDiv.innerHTML = '<span class="text-red-500">Invalid date format!</span>';
-                } else if (customDate < birthDate) {
-                    ageOnDateDiv.innerHTML = '<span class="text-red-500">Date is before birth date!</span>';
-                } else {
-                    const ageOnCustomDate = calculateAgeDetails(birthDate, customDate);
-                    ageOnDateDiv.innerHTML = formatAge(ageOnCustomDate);
-                }
-            } else {
-                ageOnDateDiv.innerHTML = 'Enter a date to see your age';
-            }
-
-            // Show fun facts
-            showFunFacts(birthDate, today, funFactsDiv);
-            additionalInfoDiv.classList.remove('hidden');
-        }
-
-        function calculateAgeDetails(birthDate, targetDate) {
-            let years = targetDate.getFullYear() - birthDate.getFullYear();
-            let months = targetDate.getMonth() - birthDate.getMonth();
-            let days = targetDate.getDate() - birthDate.getDate();
-
-            if (days < 0) {
-                months--;
-                const lastMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 0);
-                days += lastMonth.getDate();
-            }
-
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-
-            const totalDays = Math.floor((targetDate - birthDate) / (1000 * 60 * 60 * 24));
-            const totalWeeks = Math.floor(totalDays / 7);
-            const totalMonths = years * 12 + months;
-
-            return { years, months, days, totalDays, totalWeeks, totalMonths };
-        }
-
-        function formatAge(age) {
-            let result = '';
-            
-            if (age.years > 0) {
-                result += `<span class="text-3xl">${age.years}</span> year${age.years !== 1 ? 's' : ''}`;
-            }
-            
-            if (age.months > 0) {
-                if (result) result += ', ';
-                result += `<span class="text-2xl">${age.months}</span> month${age.months !== 1 ? 's' : ''}`;
-            }
-            
-            if (age.days > 0) {
-                if (result) result += ', ';
-                result += `<span class="text-xl">${age.days}</span> day${age.days !== 1 ? 's' : ''}`;
-            }
-
-            if (!result) {
-                result = '<span class="text-2xl">Born today! 🎉</span>';
-            }
-
-            return result;
-        }
-
-        function showFunFacts(birthDate, today, container) {
-            const age = calculateAgeDetails(birthDate, today);
-            const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
-            
-            if (nextBirthday < today) {
-                nextBirthday.setFullYear(today.getFullYear() + 1);
-            }
-            
-            const daysToNextBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
-            
-            container.innerHTML = `
-                <div>📅 You've lived for <strong>${age.totalDays.toLocaleString()}</strong> days</div>
-                <div>📆 That's <strong>${age.totalWeeks.toLocaleString()}</strong> weeks</div>
-                <div>🗓️ Or <strong>${age.totalMonths}</strong> months total</div>
-                <div>🎈 Days until next birthday: <strong>${daysToNextBirthday}</strong></div>
-                <div>⏰ You've experienced approximately <strong>${Math.floor(age.totalDays * 24).toLocaleString()}</strong> hours of life!</div>
-            `;
-        }
-
-        // No default date needed for text input
-    </script>
 </body>
 </html>
