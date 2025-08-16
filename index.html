@@ -4,66 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Client Manager</title>
-<style>
-  :root{
-    --bg:#0b0f14; --card:rgba(255,255,255,0.06); --cardBorder:rgba(255,255,255,0.12);
-    --text:#e8f7ff; --muted:#9fb6c3; --accent:#00e6ff;
-    --ok:#19d27a; --warn:#ffb020; --err:#ff4d4d;
-    --glow:0 0 18px rgba(0,230,255,0.55);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radial-gradient(1200px 900px at 10% 10%,#0e1420 0%,#0b0f14 60%,#090c11 100%);color:var(--text)}
-  .container{max-width:1100px;margin:28px auto;padding:0 16px}
-  .alert{margin-bottom:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.06);display:none}
-  .alert.err{border-color:#ff4d4d33}
-  .panel{background:var(--card);border:1px solid var(--cardBorder);backdrop-filter:blur(10px);border-radius:16px;overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,0.35)}
-  .header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--cardBorder)}
-  .clickable{cursor:pointer;user-select:none}
-  .title{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;text-shadow:var(--glow)}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:var(--glow)}
-  .actions{display:flex;gap:8px;align-items:center}
-  .btn{border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
-  .btn.neon{border-color:rgba(0,230,255,.5);color:#c8f9ff;box-shadow:var(--glow)}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .badge{min-width:28px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,230,255,.35);background:linear-gradient(to bottom right,rgba(0,230,255,.18),rgba(0,230,255,.05));font-weight:700;color:#c8f9ff;box-shadow:var(--glow)}
-  .content{padding:8px 0}
-  .hide{display:none}
-
-  .table-wrap{overflow:auto;max-height:58vh}
-  table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
-  th,td{padding:12px 14px;border-bottom:1px solid var(--cardBorder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  th{position:sticky;top:0;background:rgba(8,12,18,0.8);backdrop-filter:blur(6px);text-align:left;color:#cfe6f1}
-  tr{transition:background .2s}
-  tr:hover{background:rgba(255,255,255,0.05)}
-  .muted{color:var(--muted)}
-  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);font-size:12px}
-
-  /* Inline profile drawer */
-  .drawer{border-top:1px solid var(--cardBorder);background:rgba(255,255,255,0.04)}
-  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--cardBorder)}
-  .section-title{margin:10px 16px 4px;font-weight:700;font-size:14px;color:#d9f6ff}
-  .form{display:grid;gap:10px;padding:14px 16px}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  label{font-size:12px;color:#b7c7d1}
-  input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.04);color:var(--text);outline:none}
-  .list{padding:6px 16px 16px;display:grid;gap:10px}
-  .policy{display:grid;gap:6px;padding:10px;border:1px dashed var(--cardBorder);border-radius:12px}
-  .hint{font-size:12px;color:var(--muted)}
-  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
-
-  /* Tools */
-  .tools{margin-top:16px}
-  .tools-grid{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-  .tool-card{border:1px dashed var(--cardBorder);border-radius:12px;padding:16px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none}
-
-  /* Modal */
-  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:50}
-  .backdrop.show{display:flex}
-  .modal-panel{width:min(650px,92vw)}
-</style>
+<link rel="stylesheet" href="jarvis.css"/>
 </head>
 <body>
+<canvas id="particles"></canvas>
 <div class="container">
+  <h1 class="jarvis-title">URVI SHAH</h1>
+  <h2 class="jarvis-subtitle">3303</h2>
   <div id="alert" class="alert err"></div>
 
   <!-- Clients (single column) -->
@@ -110,10 +57,20 @@
       <div class="title"><span class="dot"></span> Tools</div>
     </div>
     <div class="tools-grid">
-      <a href="age-calculator.html" class="tool-card">Age Calculator</a>
-      <a href="https://shahssolutions.my.canva.site/insurancecalculator" class="tool-card" target="_blank" rel="noopener">Is Your Insurance Enough?</a>
-      <a href="https://shahssolutions.my.canva.site/budgettool" class="tool-card" target="_blank" rel="noopener">Budget &amp; Product Suggestor</a>
-      <a href="https://shahssolutions.my.canva.site/editable-premium-due-notice-poster" class="tool-card" target="_blank" rel="noopener">Premium Notice Generator</a>
+      <a href="age-calculator.html" class="tool">Age Calculator</a>
+      <a href="https://shahssolutions.my.canva.site/insurancecalculator" class="tool" target="_blank" rel="noopener">Is Your Insurance Enough?</a>
+      <a href="https://shahssolutions.my.canva.site/budgettool" class="tool" target="_blank" rel="noopener">Budget &amp; Product Suggestor</a>
+      <a href="https://shahssolutions.my.canva.site/editable-premium-due-notice-poster" class="tool" target="_blank" rel="noopener">Premium Notice Generator</a>
+    </div>
+  </div>
+
+  <!-- Plans -->
+  <div class="panel tools">
+    <div class="header">
+      <div class="title"><span class="dot"></span> Plans</div>
+    </div>
+    <div class="tools-grid">
+      <a href="715/index.html" class="tool">Jeevan Anand (715)</a>
     </div>
   </div>
 </div>
@@ -145,6 +102,8 @@
     </div>
   </div>
 </div>
+
+<script src="particles.js"></script>
 
 <script>
   // ===== CONFIG (wired to your deployment) =====
