@@ -54,7 +54,7 @@
   /* Tools */
   .tools{margin-top:16px}
   .tools-grid{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-  .tool-card{border:1px dashed var(--cardBorder);border-radius:12px;padding:16px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .tool-card{border:1px dashed var(--cardBorder);border-radius:12px;padding:16px;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none}
 
   /* Modal */
   .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:50}
@@ -107,13 +107,13 @@
   <!-- Tools -->
   <div class="panel tools">
     <div class="header">
-      <div class="title"><span class="dot"></span> Tools (coming soon)</div>
-      <div class="actions"><span class="hint">Upload/embed utilities here later</span></div>
+      <div class="title"><span class="dot"></span> Tools</div>
     </div>
     <div class="tools-grid">
-      <div class="tool-card">Slot 1</div>
-      <div class="tool-card">Slot 2</div>
-      <div class="tool-card">Slot 3</div>
+      <a href="age-calculator.html" class="tool-card">Age Calculator</a>
+      <a href="https://shahssolutions.my.canva.site/insurancecalculator" class="tool-card" target="_blank" rel="noopener">Is Your Insurance Enough?</a>
+      <a href="https://shahssolutions.my.canva.site/budgettool" class="tool-card" target="_blank" rel="noopener">Budget &amp; Product Suggestor</a>
+      <a href="https://shahssolutions.my.canva.site/editable-premium-due-notice-poster" class="tool-card" target="_blank" rel="noopener">Premium Notice Generator</a>
     </div>
   </div>
 </div>
