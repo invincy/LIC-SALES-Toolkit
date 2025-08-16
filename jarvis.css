@@ -1,8 +1,8 @@
 :root{
-  --bg:#0b0f14;
-  --card:rgba(255,255,255,0.06);
-  --cardBorder:rgba(11,78,162,0.35);
-  --text:#e8f7ff;
+  --bg:#fff8c4;
+  --card:rgba(0,123,255,0.1);
+  --cardBorder:rgba(0,123,255,0.35);
+  --text:#ffe066;
   --muted:#9fb6c3;
   --accent:#0B4EA2;
   --ok:#19d27a;
@@ -13,7 +13,7 @@
 
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radial-gradient(1200px 900px at 10% 10%,#0e1420 0%,#0b0f14 60%,#090c11 100%);color:var(--text)}
+body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radial-gradient(1200px 900px at 10% 10%,#fff8c4 0%,#fff3a0 60%,#ffe066 100%);color:var(--text);text-shadow:0 0 5px var(--text)}
 #particles{position:fixed;inset:0;z-index:-1}
 .container{max-width:1100px;margin:28px auto;padding:0 16px}
 .alert{margin-bottom:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.06);display:none}
@@ -23,34 +23,34 @@ body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radia
 
 .header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--cardBorder)}
 .clickable{cursor:pointer;user-select:none}
-.title{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;text-shadow:var(--glow)}
+.title{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;color:var(--text);text-shadow:0 0 8px var(--text)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:var(--glow)}
 actions{display:flex;gap:8px;align-items:center}
 .actions{display:flex;gap:8px;align-items:center}
 .btn{border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
-.btn.neon{border-color:rgba(11,78,162,0.5);color:#c8f9ff;box-shadow:var(--glow)}
+.btn.neon{border-color:rgba(11,78,162,0.5);color:var(--text);box-shadow:var(--glow)}
 .btn:disabled{opacity:.6;cursor:not-allowed}
-.badge{min-width:28px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(11,78,162,0.35);background:linear-gradient(to bottom right,rgba(11,78,162,0.18),rgba(11,78,162,0.05));font-weight:700;color:#c8f9ff;box-shadow:var(--glow)}
+.badge{min-width:28px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(11,78,162,0.35);background:linear-gradient(to bottom right,rgba(11,78,162,0.18),rgba(11,78,162,0.05));font-weight:700;color:var(--text);box-shadow:var(--glow)}
 .content{padding:8px 0}
 .hide{display:none}
-@keyframes glow{from{text-shadow:0 0 8px rgba(11,78,162,0.7)}to{text-shadow:0 0 18px rgba(11,78,162,1)}}
-.jarvis-title,.jarvis-subtitle{text-align:center;color:var(--accent);animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{from{text-shadow:0 0 8px rgba(255,223,0,0.7)}to{text-shadow:0 0 18px rgba(255,223,0,1)}}
+.jarvis-title,.jarvis-subtitle{text-align:center;color:var(--text);animation:glow 2s ease-in-out infinite alternate}
 .jarvis-title{margin-top:24px;font-size:2.5em}
 .jarvis-subtitle{font-size:1.5em;margin-bottom:24px}
 .table-wrap{overflow:auto;max-height:58vh}
 table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
 th,td{padding:12px 14px;border-bottom:1px solid var(--cardBorder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-th{position:sticky;top:0;background:rgba(8,12,18,0.8);backdrop-filter:blur(6px);text-align:left;color:#cfe6f1}
+th{position:sticky;top:0;background:rgba(8,12,18,0.8);backdrop-filter:blur(6px);text-align:left;color:var(--text)}
 tr{transition:background .2s}
 tr:hover{background:rgba(255,255,255,0.05)}
 .muted{color:var(--muted)}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.05);font-size:12px}
 .drawer{border-top:1px solid var(--cardBorder);background:rgba(255,255,255,0.04)}
 .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--cardBorder)}
-.section-title{margin:10px 16px 4px;font-weight:700;font-size:14px;color:#d9f6ff}
+.section-title{margin:10px 16px 4px;font-weight:700;font-size:14px;color:var(--text)}
 .form{display:grid;gap:10px;padding:14px 16px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-label{font-size:12px;color:#b7c7d1}
+label{font-size:12px;color:var(--text)}
 input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.04);color:var(--text);outline:none}
 .list{padding:6px 16px 16px;display:grid;gap:10px}
 .policy{display:grid;gap:6px;padding:10px;border:1px dashed var(--cardBorder);border-radius:12px}
@@ -67,10 +67,10 @@ input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px
 .modal-panel{width:min(650px,92vw)}
 .result{margin-top:1rem;font-size:1.2rem}
 .contact{text-align:center;margin-top:.5rem}
-.contact a{color:var(--accent);text-decoration:none;margin:0 .5rem}
-.contact a:hover{text-shadow:0 0 5px var(--accent)}
+.contact a{color:var(--text);text-decoration:none;margin:0 .5rem;text-shadow:0 0 5px var(--text)}
+.contact a:hover{text-shadow:0 0 8px var(--text)}
 
-.tool{display:flex;align-items:center;justify-content:center;padding:1.5rem;text-decoration:none;color:var(--accent);background:rgba(11,78,162,0.1);border:1px solid rgba(11,78,162,0.6);border-radius:12px;transition:.3s;box-shadow:0 0 12px rgba(11,78,162,0.6)}
+.tool{display:flex;align-items:center;justify-content:center;padding:1.5rem;text-decoration:none;color:var(--text);background:rgba(11,78,162,0.1);border:1px solid rgba(11,78,162,0.6);border-radius:12px;transition:.3s;box-shadow:0 0 12px rgba(11,78,162,0.6);text-shadow:0 0 5px var(--text)}
 .tool:hover{background:rgba(11,78,162,0.2);box-shadow:0 0 20px var(--accent)}
 
 .card-container{max-width:800px;margin:4rem auto;padding:2rem;background:var(--card);border:1px solid var(--cardBorder);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(11,78,162,0.2)}
