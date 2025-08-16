@@ -13,6 +13,7 @@
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,Segoe UI,Inter,Roboto,Arial;background:radial-gradient(1200px 900px at 10% 10%,#0e1420 0%,#0b0f14 60%,#090c11 100%);color:var(--text)}
+  #particles{position:fixed;inset:0;z-index:-1}
   .container{max-width:1100px;margin:28px auto;padding:0 16px}
   .alert{margin-bottom:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--cardBorder);background:rgba(255,255,255,0.06);display:none}
   .alert.err{border-color:#ff4d4d33}
@@ -28,6 +29,11 @@
   .badge{min-width:28px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(0,230,255,.35);background:linear-gradient(to bottom right,rgba(0,230,255,.18),rgba(0,230,255,.05));font-weight:700;color:#c8f9ff;box-shadow:var(--glow)}
   .content{padding:8px 0}
   .hide{display:none}
+
+  @keyframes glow{from{text-shadow:0 0 8px rgba(0,230,255,0.7)}to{text-shadow:0 0 18px rgba(0,230,255,1)}}
+  .jarvis-title,.jarvis-subtitle{text-align:center;color:var(--accent);animation:glow 2s ease-in-out infinite alternate}
+  .jarvis-title{margin-top:24px;font-size:2.5em}
+  .jarvis-subtitle{font-size:1.5em;margin-bottom:24px}
 
   .table-wrap{overflow:auto;max-height:58vh}
   table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
@@ -63,9 +69,12 @@
 </style>
 </head>
 <body>
+<canvas id="particles"></canvas>
 <div class="container">
-  <h1 style="text-align:center;">URVI SHAH</h1>
-  <h2 style="text-align:center;">3303</h2>
+
+  <h1 class="jarvis-title">URVI SHAH</h1>
+  <h2 class="jarvis-subtitle">3303</h2>
+
   <div id="alert" class="alert err"></div>
 
   <!-- Clients (single column) -->
@@ -147,6 +156,28 @@
     </div>
   </div>
 </div>
+
+<script>
+  const pCanvas=document.getElementById('particles');
+  const pCtx=pCanvas.getContext('2d');
+  let pw,ph;
+  function pResize(){pw=pCanvas.width=innerWidth;ph=pCanvas.height=innerHeight;}
+  window.addEventListener('resize',pResize);pResize();
+  const particles=Array.from({length:80},()=>({x:Math.random()*pw,y:Math.random()*ph,vx:(Math.random()-0.5)*0.7,vy:(Math.random()-0.5)*0.7}));
+  (function drawParticles(){
+    pCtx.clearRect(0,0,pw,ph);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>pw) p.vx*=-1;
+      if(p.y<0||p.y>ph) p.vy*=-1;
+      pCtx.fillStyle='rgba(0,230,255,0.7)';
+      pCtx.beginPath();
+      pCtx.arc(p.x,p.y,2,0,Math.PI*2);
+      pCtx.fill();
+    });
+    requestAnimationFrame(drawParticles);
+  })();
+</script>
 
 <script>
   // ===== CONFIG (wired to your deployment) =====
