@@ -4,40 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Age Calculator</title>
+  <link rel="stylesheet" href="jarvis.css"/>
   <style>
-    body{margin:0;background:#000;color:#00eaff;font-family:Arial,sans-serif;overflow:hidden}
-    #particles{position:fixed;inset:0;z-index:-1}
-    .container{max-width:600px;margin:4rem auto;padding:2rem;background:rgba(255,255,255,.05);border:1px solid rgba(0,234,255,.3);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(0,234,255,.2)}
-    h1{text-align:center;margin-top:0}
     label{display:block;margin-top:1rem;margin-bottom:.5rem}
-    input{width:100%;padding:.8rem;background:rgba(0,0,0,.4);border:1px solid #00eaff;border-radius:8px;color:#00eaff}
-    input:focus{outline:none;box-shadow:0 0 10px #00eaff}
-    .result{margin-top:1rem;font-size:1.2rem}
+    input{width:100%;padding:.8rem;background:rgba(0,0,0,0.4);border:1px solid var(--accent);border-radius:8px;color:var(--accent)}
+    input:focus{outline:none;box-shadow:0 0 10px var(--accent)}
   </style>
 </head>
 <body>
   <canvas id="particles"></canvas>
   <div class="container">
-    <h1>🎂 Age Calculator</h1>
-    <label for="birthDate">Enter your birth date (DDMMYYYY):</label>
-    <input type="text" id="birthDate" maxlength="8" placeholder="02011996" oninput="formatDateInput(this);calculateAge();">
-    <div id="ageToday" class="result">Please enter your birth date</div>
-    <hr style="border-color:rgba(0,234,255,.2);margin:2rem 0;">
-    <label for="customDate">Enter a date (DDMMYYYY):</label>
-    <input type="text" id="customDate" maxlength="8" placeholder="15062024" oninput="formatDateInput(this);calculateAge();">
-    <div id="ageOnDate" class="result">Select a date to see your age</div>
-    <div id="additionalInfo" style="display:none;margin-top:2rem;">
-      <h3>Fun Facts:</h3>
-      <div id="funFacts"></div>
+    <h1 class="jarvis-title">URVI SHAH</h1>
+    <h2 class="jarvis-subtitle">3303</h2>
+    <div class="card-container" style="max-width:600px;">
+      <h1>🎂 Age Calculator</h1>
+      <label for="birthDate">Enter your birth date (DDMMYYYY):</label>
+      <input type="text" id="birthDate" maxlength="8" placeholder="02011996" oninput="formatDateInput(this);calculateAge();">
+      <div id="ageToday" class="result">Please enter your birth date</div>
+      <hr>
+      <label for="customDate">Enter a date (DDMMYYYY):</label>
+      <input type="text" id="customDate" maxlength="8" placeholder="15062024" oninput="formatDateInput(this);calculateAge();">
+      <div id="ageOnDate" class="result">Select a date to see your age</div>
+      <div id="additionalInfo" style="display:none;margin-top:2rem;">
+        <h3>Fun Facts:</h3>
+        <div id="funFacts"></div>
+      </div>
     </div>
   </div>
+  <script src="particles.js"></script>
   <script>
-    const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
-    function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
-    window.addEventListener('resize',resize);resize();
-    const particles=[];for(let i=0;i<60;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,size:2+Math.random()*2})}
-    function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(0,234,255,.5)';ctx.fill()});requestAnimationFrame(draw)}
-    draw();
     function formatDateInput(input){input.value=input.value.replace(/[^0-9]/g,'')}
     function parseCustomDate(str){if(str.length!==8)return null;const d=parseInt(str.slice(0,2)),m=parseInt(str.slice(2,4)),y=parseInt(str.slice(4,8));if(d<1||d>31||m<1||m>12||y<1900||y>2100)return null;const date=new Date(y,m-1,d);if(date.getDate()!==d||date.getMonth()!==m-1||date.getFullYear()!==y)return null;return date}
     function calculateAge(){const birth=document.getElementById('birthDate'),custom=document.getElementById('customDate'),todayDiv=document.getElementById('ageToday'),onDateDiv=document.getElementById('ageOnDate'),info=document.getElementById('additionalInfo'),facts=document.getElementById('funFacts');if(!birth.value||birth.value.length!==8){todayDiv.textContent='Please enter your birth date (8 digits)';onDateDiv.textContent='Select a date to see your age';info.style.display='none';return}const birthDate=parseCustomDate(birth.value);if(!birthDate){todayDiv.innerHTML='<span style="color:#ff4d4d;">Invalid birth date format!</span>';onDateDiv.textContent='Select a date to see your age';info.style.display='none';return}const today=new Date();todayDiv.innerHTML=formatAge(calculateAgeDetails(birthDate,today));if(custom.value&&custom.value.length===8){const customDate=parseCustomDate(custom.value);if(!customDate){onDateDiv.innerHTML='<span style="color:#ff4d4d;">Invalid date format!</span>'}else if(customDate<birthDate){onDateDiv.innerHTML='<span style="color:#ff4d4d;">Date is before birth date!</span>'}else{onDateDiv.innerHTML=formatAge(calculateAgeDetails(birthDate,customDate))}}else{onDateDiv.textContent='Select a date to see your age'}showFunFacts(birthDate,today,facts);info.style.display='block'}
